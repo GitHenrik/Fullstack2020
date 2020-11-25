@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebook from './services/phonebook'
 
-//FullStack course 2020, tasks 2.6-2.12, Henrik Tarnanen
+//FullStack course 2020, tasks 2.6-2.12, 2.15-2.18 Henrik Tarnanen
+
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,12 +11,7 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   const effectHook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log(response)
-        setPersons(response.data)
-      })
+    phonebook.getAll().then(persons => setPersons(persons))
   }
 
   useEffect(effectHook, [])
@@ -24,10 +20,22 @@ const App = () => {
     event.preventDefault()
     //persons.find loops through the persons testing if a name matches
     if (persons.find(person => person.name === newName)) {
-      window.alert(`${newName} is already in the phonebook.`)
+      if (window.confirm(`Are you sure you want to update the information of ${newName}?`)) {
+        //updatedPerson is for finding the ID to update the correct information
+        const updatedPerson = persons.find(person => person.name === newName)
+        handleUpdate(updatedPerson.id, { name: newName, number: newNumber })
+
+      }
+
     }
     else {
-      setPersons(persons.concat({ name: newName, number: newNumber }))
+      phonebook
+        .addPerson({ name: newName, number: newNumber })
+        .then(response => {
+          setPersons(persons.concat(response))
+
+        })
+
       setNewName('')
       setNewNumber('')
     }
@@ -45,6 +53,27 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleDelete = id => {
+    if (window.confirm("Are you sure you want to delete this information?")) {
+      phonebook
+        .deletePerson(id)
+        .then(response => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+
+  }
+
+  const handleUpdate = (id, person) => {
+    phonebook
+      .updatePerson(id, person)
+      .then(res => {
+        effectHook()
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -58,7 +87,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
-      <NumberList persons={persons} filter={filter.toLowerCase()} />
+      <NumberList persons={persons} filter={filter.toLowerCase()} handleDelete={handleDelete} />
     </div>
   )
 
@@ -90,20 +119,25 @@ const FilterForm = ({ filter, handleFilterChange }) => {
 }
 
 
-const NumberList = ({ persons, filter }) => {
+const NumberList = ({ persons, filter, handleDelete }) => {
   //filters the persons by the filter criterion, then creates Person-components
   const temp = persons.filter(person => person.name.toLowerCase().includes(filter))
   return (
     <div>
       {temp.map(person =>
-        <Person key={person.name} name={person.name} number={person.number} />
+        <Person
+          key={person.id}
+          id={person.id}
+          name={person.name}
+          number={person.number}
+          handleDelete={handleDelete} />
       )}
     </div>
   )
 }
 
 const Person = props => {
-  return <div>Name: {props.name}, #{props.number}</div>
+  return <div>Name: {props.name}, #{props.number} <button onClick={() => props.handleDelete(props.id)}>Delete</button></div>
 }
 
 export default App
