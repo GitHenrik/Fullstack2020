@@ -1,11 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
-//FullStack course 2020, tasks 2.6-2.10, Henrik Tarnanen
+//FullStack course 2020, tasks 2.6-2.12, Henrik Tarnanen
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+
+  const effectHook = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log(response)
+        setPersons(response.data)
+      })
+  }
+
+  useEffect(effectHook, [])
 
   const handleSubmit = event => {
     event.preventDefault()
