@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import phonebook from './services/phonebook'
+import './index.css'
 
-//FullStack course 2020, tasks 2.6-2.12, 2.15-2.18 Henrik Tarnanen
-
+//FullStack course 2020, tasks 2.6-2.12, 2.15-2.18, 2.19-2.20 Henrik Tarnanen
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [success, setSuccess] = useState(true)
 
   const effectHook = () => {
     phonebook.getAll().then(persons => setPersons(persons))
   }
 
   useEffect(effectHook, [])
+
+
+
+  const handleFilterChange = event => {
+    setFilter(event.target.value)
+  }
+
+  const handleNameChange = event => {
+    setNewName(event.target.value)
+  }
+
+  const handleNumberChange = event => {
+    setNewNumber(event.target.value)
+  }
 
   const handleSubmit = event => {
     event.preventDefault()
@@ -33,7 +49,12 @@ const App = () => {
         .addPerson({ name: newName, number: newNumber })
         .then(response => {
           setPersons(persons.concat(response))
+          setSuccess(true)
+          setMessage(`Added ${newName} to the phonebook.`)
+          setTimeout(() => {
+            setMessage(null)
 
+          }, 5000)
         })
 
       setNewName('')
@@ -41,42 +62,68 @@ const App = () => {
     }
   }
 
-  const handleFilterChange = event => {
-    setFilter(event.target.value)
-  }
-
-  const handleNameChange = event => {
-    setNewName(event.target.value)
-  }
-
-  const handleNumberChange = event => {
-    setNewNumber(event.target.value)
-  }
-
-  const handleDelete = id => {
+  const handleDelete = (id, name) => {
     if (window.confirm("Are you sure you want to delete this information?")) {
       phonebook
         .deletePerson(id)
         .then(response => {
           setPersons(persons.filter(person => person.id !== id))
+          setSuccess(true)
+          setMessage(`Deleted ${name} from the phonebook.`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          setSuccess(false)
+          setMessage(`${name} has been already deleted from the phonebook.`)
         })
     }
 
   }
 
+  const Notification = ({ message, success }) => {
+    if (message === null) {
+      return null
+    }
+    if (success) {
+      return (
+        <div className="notification">
+          {message}
+        </div>)
+    }
+    return (
+      <div className="errorNotification">
+        {message}
+      </div>
+    )
+  }
+
+  //after a PUT-request, update the state, re-render and reset fields
   const handleUpdate = (id, person) => {
     phonebook
       .updatePerson(id, person)
       .then(res => {
         effectHook()
+        setSuccess(true)
+        setMessage(`Modified ${newName} in the phonebook.`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
+      })
+      //rejected promise handling
+      .catch(error => {
+        setSuccess(false)
+        setMessage(`${newName} has been already deleted from the phonebook.`)
       })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} success={success} />
       <FilterForm filter={filter} handleFilterChange={handleFilterChange} />
       <h3>Add new people</h3>
       <PersonForm
@@ -92,6 +139,8 @@ const App = () => {
   )
 
 }
+
+
 
 const PersonForm = props => {
   //console.log("Personform props: ", props)
@@ -137,7 +186,7 @@ const NumberList = ({ persons, filter, handleDelete }) => {
 }
 
 const Person = props => {
-  return <div>Name: {props.name}, #{props.number} <button onClick={() => props.handleDelete(props.id)}>Delete</button></div>
+  return <div>Name: {props.name}, #{props.number} <button onClick={() => props.handleDelete(props.id, props.name)}>Delete</button></div>
 }
 
 export default App
