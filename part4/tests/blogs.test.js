@@ -1,7 +1,5 @@
 const listHelper = require('../utils/listHelper')
 
-
-
 const manyBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -99,4 +97,24 @@ describe('Favorite blog', () => {
   })
 })
 
-//TODO tasks 4.6*, 4.7*
+//course task 4.6*
+describe('Most blogs', () => {
+  test('Author of the most blogs and their amount', () => {
+    const result = listHelper.mostBlogs(manyBlogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
+  })
+})
+
+//course task 4.7*
+describe('Most likes', () => {
+  test('Most liked author data', () => {
+    const result = listHelper.mostLikes(manyBlogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  })
+})
