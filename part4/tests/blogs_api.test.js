@@ -76,6 +76,52 @@ test('post can be added', async () => {
   //console.log(newBlogAfterPosting)
   //console.log('the new length is ', response.body.length)
   expect(response.body).toHaveLength(initialBlogs.length + 1)
+  expect(response.statusCode).toEqual(200)
+})
+
+// 4.11 ja 4.12 testit on varmaankin OK, mut pitää muokata backend niin, että nämä menee läpi.
+// pitää siis palauttaa 400 jos puuttuu url tai title, ja lisätä "likes: 0" jos puuttuu likes
+// ongelma on se, että kun tekee requestin niin blogs.js-backendissä se body ei näy?
+// pitää ehkä tehdä se 
+
+
+//course task 4.11* 
+describe('Checks for missing data', () => {
+  test('missing like-data is instantiated', async () => {
+    //instantiate blog with missing likes-data
+    const missingLikesBlog = {
+      'title': 'Unliked',
+      'author': 'Un Like',
+      'url': 'www.likeless.com'
+    }
+    //post the blog to the api
+    await api.post('/api/blogs').send(missingLikesBlog)
+    const addedPosts = await api.get('/api/blogs')
+    //check that the added post includes new likes-data
+    const modifiedPost = await addedPosts.body[addedPosts.body.length - 1]
+    //console.log('**************this is the added post: ', modifiedPost)
+    expect(modifiedPost.likes).toBeDefined()
+
+  })
+
+  //course task 4.12* TODO
+  //test if either the title or URL is missing and expect http status code 400
+  test('check for bad requests', async () => {
+    //create blog data objects with missing values
+    const missingUrlBlog = {
+      'title': 'Lazy Title',
+      'author': 'Lazy Author',
+      'likes': 2
+    }
+    const missingTitleBlog = {
+      'author': 'Lazy Author',
+      'url': 'www.lazyurl.com',
+      'likes': 3
+    }
+    //attempt to post the invalid blogs, expect to get http response 400
+    await api.post('/api/blogs').send(missingUrlBlog).expect(400)
+    await api.post('/api/blogs').send(missingTitleBlog).expect(400)
+  })
 })
 
 
