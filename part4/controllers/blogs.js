@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router()
+const { response } = require('express')
 const Blog = require('../models/blog')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
@@ -29,16 +30,34 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(result)
 })
 
-blogsRouter.get('/:id', (request, response, next) => {
-  Blog.findById(request.params.id)
-    .then(blog => {
-      if (blog) {
-        response.json(blog.toJSON())
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
+blogsRouter.get('/:id', async (request, response, next) => {
+  // Blog.findById(request.params.id)
+  //   .then(blog => {
+  //     if (blog) {
+  //       response.json(blog.toJSON())
+  //     } else {
+  //       response.status(404).end()
+  //     }
+  //   })
+  //   .catch(error => next(error))
+  const singleBlog = await Blog.findById(request.params.id)
+  if (singleBlog)
+    response.json(singleBlog.toJSON())
+  else
+    response.status(404).end()
 })
+
+//course task 4.13
+blogsRouter.delete('/:id', async (req, res, next) => {
+  const deletedBlog = await Blog.findByIdAndRemove(req.params.id)
+  //console.log('data to delete:', deletedBlog)
+  if (deletedBlog)
+    res.status(204).end()
+  else
+    res.status(400).end()
+})
+
+//course task 4.14*
+//blogsRouter.put('/')
 
 module.exports = blogsRouter
