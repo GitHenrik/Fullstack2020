@@ -1,5 +1,4 @@
 const blogsRouter = require('express').Router()
-const { response } = require('express')
 const Blog = require('../models/blog')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
@@ -30,7 +29,7 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(result)
 })
 
-blogsRouter.get('/:id', async (request, response, next) => {
+blogsRouter.get('/:id', async (request, response) => {
   // Blog.findById(request.params.id)
   //   .then(blog => {
   //     if (blog) {
@@ -48,7 +47,7 @@ blogsRouter.get('/:id', async (request, response, next) => {
 })
 
 //course task 4.13
-blogsRouter.delete('/:id', async (req, res, next) => {
+blogsRouter.delete('/:id', async (req, res) => {
   const deletedBlog = await Blog.findByIdAndRemove(req.params.id)
   //console.log('data to delete:', deletedBlog)
   if (deletedBlog)
@@ -58,6 +57,20 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 })
 
 //course task 4.14*
-//blogsRouter.put('/')
+blogsRouter.put('/:id', async (req, res) => {
+  //check for missing data in the body (everything except likes are required)
+  if (!req.body.title || !req.body.author || !req.body.url) {
+    return res.status(400).json({ error: 'Data is missing' })
+  }
+  if (!req.body.likes)
+    req.body.likes = 0
+  const oldBlog = await Blog.findById(req.params.id)
+  //console.log("likes to update: ", oldBlog.likes)
+  req.body.likes += oldBlog.likes
+  //console.log("updated body: ", req.body)
+  await Blog.findByIdAndUpdate(req.params.id, req.body)
+  const updatedBlog = await Blog.findById(req.params.id)
+  res.json(updatedBlog)
+})
 
 module.exports = blogsRouter
