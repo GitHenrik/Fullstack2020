@@ -5,7 +5,7 @@ require('express-async-errors')
 
 //task 4.17 population: displays some distinct data 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({}).populate('blog')
+  const users = await User.find({}).populate('blog', { title: 1, url: 1, author: 1 })
   res.json(users.map(user => user.toJSON()))
   // old implementation without populate
   // const users = await User.find({})
