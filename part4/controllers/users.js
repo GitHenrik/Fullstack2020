@@ -9,6 +9,15 @@ usersRouter.get('/', async (req, res) => {
   res.json(users.map(user => user.toJSON()))
 })
 
+usersRouter.delete('/:id', async (req, res) => {
+  const deletedUser = await User.findByIdAndRemove(req.params.id)
+  //console.log('data to delete:', deletedBlog)
+  if (deletedUser)
+    res.status(204).end()
+  else
+    res.status(400).end()
+})
+
 usersRouter.post('/', async (req, res) => {
   const body = req.body
   const passwordCheck = body.password
@@ -16,6 +25,8 @@ usersRouter.post('/', async (req, res) => {
     return res.status(400).end()
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
+
+
   const user = new User({
     username: body.username,
     name: body.name,

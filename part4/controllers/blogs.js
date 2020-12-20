@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
 blogsRouter.get('/', async (request, response) => {
@@ -23,10 +24,23 @@ blogsRouter.post('/', async (request, response) => {
   //add likes-field if it is missing
   if (!request.body.likes)
     request.body.likes = 0
+
+  //find the creator of the blog post, based on the request
+  const user = await User.findById(request.body.userId)
+  console.log('found this user for the blog:', user)
+
   //create the blog with mongoose model and save it 
-  const blog = new Blog(request.body)
-  const result = await blog.save()
-  response.status(201).json(result)
+  const blog = new Blog({
+    title: request.body.title,
+    author: request.body.author,
+    url: request.body.url,
+    likes: request.body.likes,
+    user: user._id
+  })
+  const savedBlog = await blog.save()
+  user.notes = user.notes.concat(savedBlog._id)
+  await user.save()
+  response.status(201).json(savedBlog)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
