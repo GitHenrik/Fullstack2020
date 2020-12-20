@@ -79,12 +79,6 @@ test('post can be added', async () => {
   expect(response.statusCode).toEqual(200)
 })
 
-// 4.11 ja 4.12 testit on varmaankin OK, mut pitää muokata backend niin, että nämä menee läpi.
-// pitää siis palauttaa 400 jos puuttuu url tai title, ja lisätä "likes: 0" jos puuttuu likes
-// ongelma on se, että kun tekee requestin niin blogs.js-backendissä se body ei näy?
-// pitää ehkä tehdä se 
-
-
 //course task 4.11* 
 describe('Checks for missing data', () => {
   test('missing like-data is instantiated', async () => {
