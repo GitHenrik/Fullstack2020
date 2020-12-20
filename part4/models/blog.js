@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-//User-reference saved to both the note and user schemas
+//User-reference saved to both the blog and user schemas
 const blogSchema = mongoose.Schema({
   title: String,
   author: String,
@@ -21,4 +21,6 @@ blogSchema.set('toJSON', {
   }
 })
 
+// const Blog = mongoose.model('Blog', blogSchema)
+// module.exports = Blog
 module.exports = mongoose.model('Blog', blogSchema)

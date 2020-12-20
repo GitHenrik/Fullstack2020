@@ -3,14 +3,14 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
+
+//task 4.17 population: displays some distinct data 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs.map(blog => blog.toJSON()))
-  // Blog
-  //   .find({})
-  //   .then(blogs => {
-  //     response.json(blogs)
-  //   })
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
+  response.json(blogs.map(user => user.toJSON()))
+  // //old implementation without population
+  // const blogs = await Blog.find({})
+  // response.json(blogs.map(blog => blog.toJSON()))
 })
 
 //tasks 4.11* and 4.12* included
@@ -27,7 +27,7 @@ blogsRouter.post('/', async (request, response) => {
 
   //find the creator of the blog post, based on the request
   const user = await User.findById(request.body.userId)
-  console.log('found this user for the blog:', user)
+  //console.log('found this user for the blog:', user)
 
   //create the blog with mongoose model and save it 
   const blog = new Blog({
@@ -38,7 +38,7 @@ blogsRouter.post('/', async (request, response) => {
     user: user._id
   })
   const savedBlog = await blog.save()
-  user.notes = user.notes.concat(savedBlog._id)
+  user.blog = user.blog.concat(savedBlog._id)
   await user.save()
   response.status(201).json(savedBlog)
 })

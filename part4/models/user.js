@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
-//User-reference saved to both the note and user schemas
+//User-reference saved to both the blog and user schemas
 const userSchema = mongoose.Schema({
   username: {
     type: String,
@@ -10,10 +10,10 @@ const userSchema = mongoose.Schema({
   },
   name: String,
   passwordHash: String,
-  notes: [
+  blog: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note'
+      ref: 'Blog'
     }
   ]
 })

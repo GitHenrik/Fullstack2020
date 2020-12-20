@@ -3,10 +3,13 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 require('express-async-errors')
 
-//course tasks for part 4
+//task 4.17 population: displays some distinct data 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blog')
   res.json(users.map(user => user.toJSON()))
+  // old implementation without populate
+  // const users = await User.find({})
+  // res.json(users.map(user => user.toJSON()))
 })
 
 usersRouter.delete('/:id', async (req, res) => {
