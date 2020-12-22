@@ -8,13 +8,13 @@ const requestLogger = (request, response, next) => {
   logger.info('---')
   next()
 }
-
+// could be modified to use headers.token instead
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     //adds the token header to the request
     const token = authorization.substring(7)
-    request.headers['token'] = token
+    request.headers.token = token
   }
   next()
 }

@@ -26,7 +26,7 @@ blogsRouter.get('/', async (request, response) => {
 
 //tasks 4.11* and 4.12* included
 blogsRouter.post('/', async (request, response) => {
-  //console.log('starting post-request with token ', request.headers['token'])
+  //console.log('starting post-request with header ', request.headers)
   //if url or title is missing, response with 400 bad request
   const missingUrlOrTitle = !request.body.url || !request.body.title
   if (missingUrlOrTitle) {
@@ -39,7 +39,7 @@ blogsRouter.post('/', async (request, response) => {
   }
   //const token = getTokenFrom(request)
   //get the object that was used to create the token
-  const decodedToken = jwt.verify(request.headers['token'], process.env.SECRET)
+  const decodedToken = jwt.verify(request.headers.token, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
