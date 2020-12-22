@@ -1,8 +1,19 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
+
+//token authorization methods
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    //returns the authorization token following the header
+    return authorization.substring(7)
+  }
+  return null
+}
 
 //task 4.17 population: displays some distinct data 
 blogsRouter.get('/', async (request, response) => {
@@ -15,6 +26,7 @@ blogsRouter.get('/', async (request, response) => {
 
 //tasks 4.11* and 4.12* included
 blogsRouter.post('/', async (request, response) => {
+
   //if url or title is missing, response with 400 bad request
   const missingUrlOrTitle = !request.body.url || !request.body.title
   if (missingUrlOrTitle) {
@@ -22,11 +34,20 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(400).end()
   }
   //add likes-field if it is missing
-  if (!request.body.likes)
+  if (!request.body.likes) {
     request.body.likes = 0
+  }
+  const token = getTokenFrom(request)
+  //get the object that was used to create the token
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!token || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  const user = await User.findById(decodedToken.id)
 
   //find the creator of the blog post, based on the request
-  const user = await User.findById(request.body.userId)
+  //const user = await User.findById(request.body.userId)
   //console.log('found this user for the blog:', user)
 
   //create the blog with mongoose model and save it 
