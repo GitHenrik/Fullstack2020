@@ -32,6 +32,7 @@ beforeEach(async () => {
   await blogObject.save()
   blogObject = new Blog(initialBlogs[2])
   await blogObject.save()
+  
 })
 
 //course task 4.8
@@ -97,8 +98,6 @@ describe('Checks for missing data', () => {
     expect(modifiedPost.likes).toBeDefined()
 
   })
-
-  //course task 4.12* TODO
   //test if either the title or URL is missing and expect http status code 400
   test('check for bad requests', async () => {
     //create blog data objects with missing values
@@ -115,6 +114,21 @@ describe('Checks for missing data', () => {
     //attempt to post the invalid blogs, expect to get http response 400
     await api.post('/api/blogs').send(missingUrlBlog).expect(400)
     await api.post('/api/blogs').send(missingTitleBlog).expect(400)
+  })
+
+    //task 4.22*, test that response is 401 with missing token
+  test('Missing token', async () => {
+    const missingTokenBlog = {
+      'title': 'Lazy Token',
+      'author': 'Tokenless',
+      'url': 'www.token.com',
+      'likes': 5
+    }
+    await api
+      .post('/api/blogs')
+      .send(missingTokenBlog)
+      .set({ Authorization: null })
+      .expect(401)
   })
 })
 
