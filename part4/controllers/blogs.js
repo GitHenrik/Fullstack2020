@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { response } = require('express')
 require('express-async-errors')
 //modified to use async/await-syntax instead of response chaining
 
@@ -81,14 +82,36 @@ blogsRouter.get('/:id', async (request, response) => {
     response.status(404).end()
 })
 
-//course task 4.13
+//course task 4.13 and 4.21*
 blogsRouter.delete('/:id', async (req, res) => {
-  const deletedBlog = await Blog.findByIdAndRemove(req.params.id)
-  //console.log('data to delete:', deletedBlog)
-  if (deletedBlog)
-    res.status(204).end()
-  else
+   //check if blog with this id exists
+  const blogToBeDeleted = await Blog.findById(req.params.id)
+  if (!blogToBeDeleted) {
     res.status(400).end()
+  }
+  //identify the deletor to match the creator of the blog
+  const decodedToken = jwt.verify(req.headers.token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  const requestingUser = await User.findById(decodedToken.id)
+ 
+  //check that the blog's creator and request id's match
+  if ( blogToBeDeleted.user.toString() === requestingUser.id.toString() ) {
+    await Blog.findByIdAndRemove(req.params.id)
+    return res.status(204).end()
+  } else {
+    return res.status(401).json({ error: 'Forbidden deletion attempt' })
+  }
+
+
+  // const deletedBlog = await Blog.findByIdAndRemove(req.params.id)
+  //console.log('data to delete:', deletedBlog)
+  // if (deletedBlog)
+  //   res.status(204).end()
+  // else
+  //   res.status(400).end()
 })
 
 //course task 4.14*
