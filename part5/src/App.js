@@ -21,8 +21,10 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  //state for notification messages
   const [message, setMessage] = useState(null)
-
+  //state to handle custom display
+  const [creationVisible, setCreationVisible] = useState(false)
   //instantiates all blogs from backend
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -96,12 +98,14 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
+    setCreationVisible(false)
   }
 
   if (user === null) {
     return (
       <div>
       <Notification message={message}/>
+      
       <LoginForm
        username={username}
        password={password}
@@ -113,6 +117,10 @@ const App = () => {
     )
   }
 
+  
+  const hideWhenVisible = { display: creationVisible ? 'none' : '' }
+  const showWhenVisible = { display: creationVisible ? '' : 'none' }
+  
   return (
     <div>
       <Notification message={message}/>
@@ -120,15 +128,22 @@ const App = () => {
         <h4>User {user.username} has logged in</h4>
         <button onClick={handleLogout}>Logout</button>
       </div>
-      <NewBlogForm
-        handleCreation={handleCreation}
-        title={title}
-        author={author}
-        url={url}
-        setTitle={setTitle}
-        setAuthor={setAuthor}
-        setUrl={setUrl}
-      />
+      <div style={hideWhenVisible}>
+          <button onClick={() => setCreationVisible(true)}>Create a new blog</button>
+        </div>
+      <div style={showWhenVisible}>
+        <NewBlogForm
+          handleCreation={handleCreation}
+          title={title}
+          author={author}
+          url={url}
+          setTitle={setTitle}
+          setAuthor={setAuthor}
+          setUrl={setUrl}
+        />
+        <button onClick={() => setCreationVisible(false)}>Cancel creation</button>
+      </div>
+      
       <BlogForm 
         blogs={blogs}
       />
