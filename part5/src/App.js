@@ -5,6 +5,7 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import NewBlogForm from './components/NewBlogForm'
+import Notification from './components/Notification'
 
 //FullStack 2020 -course tasks, part 5. Template taken from course material as expected.
 //uses backend implementation from course tasks in course part 4.
@@ -20,6 +21,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState(null)
 
   //instantiates all blogs from backend
   useEffect(() => {
@@ -50,16 +52,27 @@ const App = () => {
         username: user.username,
         name: user.name
       })
+      setMessage('Successful login')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
       setUsername('')
       setPassword('')
     }
     catch (exception) {
-      window.alert('wrong credentials')
+      setMessage('wrong credentials')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
 
   //logout for task 5.2
   const handleLogout = () => {
+    setMessage('Logged out')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     setUser(null)
     window.localStorage.removeItem('loggedUser')
     //console.log('logged out')
@@ -76,10 +89,19 @@ const App = () => {
     }
     const createdBlog = await blogService.create(newBlog)
     setBlogs(blogs.concat(createdBlog))
+    setMessage(`Created a new blog called ${newBlog.title}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   if (user === null) {
     return (
+      <div>
+      <Notification message={message}/>
       <LoginForm
        username={username}
        password={password}
@@ -87,11 +109,13 @@ const App = () => {
        setUsername={setUsername}
        setPassword={setPassword}
       />
+      </div>
     )
   }
 
   return (
     <div>
+      <Notification message={message}/>
       <div>
         <h4>User {user.username} has logged in</h4>
         <button onClick={handleLogout}>Logout</button>
