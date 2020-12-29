@@ -23,7 +23,7 @@ const App = () => {
   const [url, setUrl] = useState('')
   //state for notification messages
   const [message, setMessage] = useState(null)
-  //state to handle custom display
+  //state to handle custom display / course task 5.6
   const [creationVisible, setCreationVisible] = useState(false)
   //instantiates all blogs from backend
   useEffect(() => {
@@ -117,10 +117,7 @@ const App = () => {
     )
   }
 
-  
-  const hideWhenVisible = { display: creationVisible ? 'none' : '' }
-  const showWhenVisible = { display: creationVisible ? '' : 'none' }
-  
+ 
   return (
     <div>
       <Notification message={message}/>
@@ -128,10 +125,6 @@ const App = () => {
         <h4>User {user.username} has logged in</h4>
         <button onClick={handleLogout}>Logout</button>
       </div>
-      <div style={hideWhenVisible}>
-          <button onClick={() => setCreationVisible(true)}>Create a new blog</button>
-        </div>
-      <div style={showWhenVisible}>
         <NewBlogForm
           handleCreation={handleCreation}
           title={title}
@@ -140,10 +133,9 @@ const App = () => {
           setTitle={setTitle}
           setAuthor={setAuthor}
           setUrl={setUrl}
-        />
-        <button onClick={() => setCreationVisible(false)}>Cancel creation</button>
-      </div>
-      
+          creationVisible={creationVisible}
+          setCreationVisible={setCreationVisible}
+        />     
       <BlogForm 
         blogs={blogs}
       />
