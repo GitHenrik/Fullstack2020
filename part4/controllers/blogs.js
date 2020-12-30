@@ -122,9 +122,13 @@ blogsRouter.put('/:id', async (req, res) => {
   }
   if (!req.body.likes)
     req.body.likes = 0
-  const oldBlog = await Blog.findById(req.params.id)
+
+  //*** old implementation for updating likes by more than 1 at a time */
+  //const oldBlog = await Blog.findById(req.params.id)
   //console.log("likes to update: ", oldBlog.likes)
-  req.body.likes += oldBlog.likes
+  //req.body.likes += oldBlog.likes
+  //**** */
+
   //console.log("updated body: ", req.body)
   await Blog.findByIdAndUpdate(req.params.id, req.body)
   const updatedBlog = await Blog.findById(req.params.id)

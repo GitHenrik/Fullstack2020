@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
@@ -99,6 +98,25 @@ const App = () => {
     setUrl('')
   }
 
+  //course task 5.8*, this is called when clicking a like button to increment likes by 1
+  //handler is passed as a prop to single blogs through the BlogForm-component
+  const handleLike = async blog => {
+    //console.log('Updating blog with id ', blog.id)
+    const newLikes = blog.likes + 1
+    const updatedBlog = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: newLikes,
+      user: blog.user.id
+    }
+    //put request to update data on the server
+    await blogService.update(blog.id, updatedBlog)
+    //update frontend with new data
+    const updatedBlogs = await blogService.getAll()
+    setBlogs(updatedBlogs)
+  }
+  
   if (user === null) {
     return (
       <div>
@@ -115,7 +133,7 @@ const App = () => {
     )
   }
 
- 
+
   return (
     <div>
       <Notification message={message}/>
@@ -125,6 +143,7 @@ const App = () => {
       </div>
       <Togglable buttonLabel={'Create a new blog'}>
         <NewBlogForm
+          
           handleCreation={handleCreation}
           title={title}
           author={author}
@@ -134,7 +153,7 @@ const App = () => {
           setUrl={setUrl}
         />
       </Togglable>     
-      <BlogForm blogs={blogs}/>
+      <BlogForm blogs={blogs} handleLike={handleLike}/>
     </div>
   )
 }

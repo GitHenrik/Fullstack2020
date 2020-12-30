@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-const Blog = ({ blog }) => {
+
+const Blog = ({ blog, handleLike }) => {
   const [showAllInfo, setShowAllInfo] = useState(false)
 
   const hideWhenVisible = { display: showAllInfo ? 'none' : '' }
@@ -17,6 +18,9 @@ const Blog = ({ blog }) => {
     setShowAllInfo(!showAllInfo)
   }
 
+    //liking a blog / task 5.8*
+ 
+
   return (
     <div style={blogStyle}>
       {blog.title}
@@ -24,7 +28,7 @@ const Blog = ({ blog }) => {
       <button style={showWhenVisible} onClick={() => toggleVisibility()}>Hide</button>
       <div style={showWhenVisible}>
         {blog.url}<br/>
-        {blog.likes}<button onClick={() => console.log('liked')}>Like</button><br/>
+        {blog.likes}<button onClick={() => handleLike(blog)}>Like</button><br/>
         {blog.author}<br/>
       </div>
     </div> 
