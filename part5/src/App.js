@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 //FullStack 2020 -course tasks, part 5. Template taken from course material as expected.
 //uses backend implementation from course tasks in course part 4.
@@ -23,8 +24,7 @@ const App = () => {
   const [url, setUrl] = useState('')
   //state for notification messages
   const [message, setMessage] = useState(null)
-  //state to handle custom display / course task 5.6
-  const [creationVisible, setCreationVisible] = useState(false)
+
   //instantiates all blogs from backend
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -80,7 +80,6 @@ const App = () => {
     //console.log('logged out')
   }
 
-
   //blog creation for task 5.3
   const handleCreation = async event => {
     event.preventDefault()
@@ -98,7 +97,6 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
-    setCreationVisible(false)
   }
 
   if (user === null) {
@@ -125,6 +123,7 @@ const App = () => {
         <h4>User {user.username} has logged in</h4>
         <button onClick={handleLogout}>Logout</button>
       </div>
+      <Togglable buttonLabel={'Create a new blog'}>
         <NewBlogForm
           handleCreation={handleCreation}
           title={title}
@@ -133,12 +132,9 @@ const App = () => {
           setTitle={setTitle}
           setAuthor={setAuthor}
           setUrl={setUrl}
-          creationVisible={creationVisible}
-          setCreationVisible={setCreationVisible}
-        />     
-      <BlogForm 
-        blogs={blogs}
-      />
+        />
+      </Togglable>     
+      <BlogForm blogs={blogs}/>
     </div>
   )
 }
