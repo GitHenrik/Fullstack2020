@@ -32,8 +32,10 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+      //console.log('updated blog list')
+      setBlogs( blogs.sort((blog, nextBlog) => {return nextBlog.likes-blog.likes}) )
+    }    
     )  
   }, [])
 
@@ -114,7 +116,8 @@ const App = () => {
     await blogService.update(blog.id, updatedBlog)
     //update frontend with new data
     const updatedBlogs = await blogService.getAll()
-    setBlogs(updatedBlogs)
+    //setBlogs(updatedBlogs)
+    setBlogs( updatedBlogs.sort((blog, nextBlog) => {return nextBlog.likes-blog.likes}) )
   }
   
   if (user === null) {
