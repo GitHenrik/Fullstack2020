@@ -119,6 +119,11 @@ const App = () => {
     //setBlogs(updatedBlogs)
     setBlogs( updatedBlogs.sort((blog, nextBlog) => {return nextBlog.likes-blog.likes}) )
   }
+
+  //TODO course task 5.10* 
+  const handleDelete = async blog => {
+    console.log('deleted blog ', blog.title)
+  }
   
   if (user === null) {
     return (
@@ -156,7 +161,7 @@ const App = () => {
           setUrl={setUrl}
         />
       </Togglable>     
-      <BlogForm blogs={blogs} handleLike={handleLike}/>
+      <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete}/>
     </div>
   )
 }
