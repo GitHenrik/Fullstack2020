@@ -34,9 +34,9 @@ const App = () => {
     }
     blogService.getAll().then(blogs => {
       //console.log('updated blog list')
-      setBlogs( blogs.sort((blog, nextBlog) => {return nextBlog.likes-blog.likes}) )
-    }    
-    )  
+      setBlogs(blogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
+    }
+    )
   }, [])
 
 
@@ -44,11 +44,11 @@ const App = () => {
   const handleSubmit = async event => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
       )
-      blogService.setToken(user.token) 
+      blogService.setToken(user.token)
       //after logging in, update the state accordingly
       setUser({
         token: user.token,
@@ -73,9 +73,9 @@ const App = () => {
   //logout for task 5.2
   const handleLogout = () => {
     setMessage('Logged out')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     setUser(null)
     window.localStorage.removeItem('loggedUser')
     //console.log('logged out')
@@ -117,26 +117,30 @@ const App = () => {
     //update frontend with new data
     const updatedBlogs = await blogService.getAll()
     //setBlogs(updatedBlogs)
-    setBlogs( updatedBlogs.sort((blog, nextBlog) => {return nextBlog.likes-blog.likes}) )
+    setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
   }
 
-  //TODO course task 5.10* 
+  //course task 5.10*, blog deletion
   const handleDelete = async blog => {
-    console.log('deleted blog ', blog.title)
+    if (window.confirm(`Remove a blog called ${blog.title}?`)) {
+      await blogService.deleteBlog(blog.id)
+      const updatedBlogs = blogs.filter(blogToSave => blog.id !== blogToSave.id)
+      setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
+    }
   }
-  
+
   if (user === null) {
     return (
       <div>
-      <Notification message={message}/>
-      
-      <LoginForm
-       username={username}
-       password={password}
-       handleSubmit={handleSubmit}
-       setUsername={setUsername}
-       setPassword={setPassword}
-      />
+        <Notification message={message} />
+
+        <LoginForm
+          username={username}
+          password={password}
+          handleSubmit={handleSubmit}
+          setUsername={setUsername}
+          setPassword={setPassword}
+        />
       </div>
     )
   }
@@ -144,14 +148,14 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={message}/>
+      <Notification message={message} />
       <div>
         <h4>User {user.username} has logged in</h4>
         <button onClick={handleLogout}>Logout</button>
       </div>
       <Togglable buttonLabel={'Create a new blog'}>
         <NewBlogForm
-          
+
           handleCreation={handleCreation}
           title={title}
           author={author}
@@ -160,8 +164,8 @@ const App = () => {
           setAuthor={setAuthor}
           setUrl={setUrl}
         />
-      </Togglable>     
-      <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete}/>
+      </Togglable>
+      <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} user={user} />
     </div>
   )
 }

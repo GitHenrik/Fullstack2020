@@ -1,10 +1,11 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-const Blog = ({ blog, handleLike, handleDelete }) => {
+const Blog = ({ blog, handleLike, handleDelete, loggedIn }) => {
   const [showAllInfo, setShowAllInfo] = useState(false)
 
   const hideWhenVisible = { display: showAllInfo ? 'none' : '' }
   const showWhenVisible = { display: showAllInfo ? '' : 'none' }
+  const showWhenLoggedIn = { display: loggedIn ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -18,8 +19,8 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
     setShowAllInfo(!showAllInfo)
   }
 
-    //liking a blog / task 5.8*
- 
+  //liking a blog / task 5.8*
+
 
   return (
     <div style={blogStyle}>
@@ -27,15 +28,15 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
       <button style={hideWhenVisible} onClick={() => toggleVisibility()}>View</button>
       <button style={showWhenVisible} onClick={() => toggleVisibility()}>Hide</button>
       <div style={showWhenVisible}>
-        {blog.url}<br/>
-        {blog.likes}<button onClick={() => handleLike(blog)}>Like</button><br/>
-        {blog.author}<br/>
-        <button onClick={() => handleDelete(blog)}>Delete</button>
+        {blog.url}<br />
+        {blog.likes}<button onClick={() => handleLike(blog)}>Like</button><br />
+        {blog.author}<br />
+        <button style={showWhenLoggedIn} onClick={() => handleDelete(blog)}>Delete</button>
       </div>
-    </div> 
+    </div>
   )
 }
-  
-  
+
+
 
 export default Blog
