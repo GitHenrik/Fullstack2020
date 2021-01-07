@@ -5,7 +5,7 @@ const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-  return <h1>{message}</h1>
+  return <div id='notification'><h1>{message}</h1></div>
 }
 
 Notification.propTypes = {
