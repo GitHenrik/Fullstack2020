@@ -30,7 +30,7 @@ test('Renders title and author', () => {
     'Test Author'
   )
 
-  expect(component.queryByText('test.test.test')).not.toBeInTheDocument();
+  expect(component.queryByText('test.test.test')).not.toBeInTheDocument()
   const likes = component.queryByLabelText('likes')
   expect(likes).not.toBeInTheDocument()
 

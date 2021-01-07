@@ -32,7 +32,7 @@ beforeEach(async () => {
   await blogObject.save()
   blogObject = new Blog(initialBlogs[2])
   await blogObject.save()
-  
+
 })
 
 //course task 4.8
@@ -116,7 +116,7 @@ describe('Checks for missing data', () => {
     await api.post('/api/blogs').send(missingTitleBlog).expect(400)
   })
 
-    //task 4.22*, test that response is 401 with missing token
+  //task 4.22*, test that response is 401 with missing token
   test('Missing token', async () => {
     const missingTokenBlog = {
       'title': 'Lazy Token',

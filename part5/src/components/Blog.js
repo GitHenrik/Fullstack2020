@@ -24,13 +24,13 @@ const Blog = ({ blog, handleLike, handleDelete, loggedIn }) => {
 
 
   return (
-    <div style={blogStyle}>
-      <div className='title-author-test'>
+    <div id='entire-blog' style={blogStyle}>
+      <div id='minimized-blog' className='title-author-test'>
         {blog.title}<br /> {blog.author}
         <button id='view-blog' style={hideWhenVisible} onClick={() => toggleVisibility()}>View</button>
         <button id='hide-blog' style={showWhenVisible} onClick={() => toggleVisibility()}>Hide</button>
       </div>
-      <div style={showWhenVisible} className='show-all-test'>
+      <div id='maximized-blog' style={showWhenVisible} className='show-all-test'>
         {blog.url}<br />
         Likes: {blog.likes} <button id='like-button' onClick={() => handleLike(blog)}>Like</button><br />
         {blog.user.name}

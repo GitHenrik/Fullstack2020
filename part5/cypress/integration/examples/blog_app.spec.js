@@ -57,12 +57,14 @@ describe('Blog application ', function () {
           cy.createBlog({
             title: 'Another Cypress Blog',
             author: 'Cypress Author',
-            url: 'another.cypress.url'
+            url: 'another.cypress.url',
+            likes: 0
           })
           cy.createBlog({
             title: 'Second Cypress Blog',
             author: 'Cypress Author 2',
-            url: 'yetanother.cypress.url'
+            url: 'yetanother.cypress.url',
+            likes: 0
           })
         })
         it('a blog can be viewed and then hidden', function () {
@@ -83,6 +85,34 @@ describe('Blog application ', function () {
             .get('#delete-blog').click()
           cy.on('window:confirm', () => true)
           cy.get('html').should('not.contain', 'Another Cypress Blog')
+        })
+      })
+      //course task 5.22, check that blogs are in order of likes
+      describe('Blog list automatic sorting', function () {
+        //some blogs are added, with the most likes being added in the middle
+        beforeEach(function () {
+          cy.createBlog({
+            title: 'Least Likes',
+            author: 'Cypress Author',
+            url: 'another.cypress.url',
+            likes: 0
+          })
+          cy.createBlog({
+            title: 'Most Likes',
+            author: 'Cypress Author 2',
+            url: 'yetanother.cypress.url',
+            likes: 5
+          })
+          cy.createBlog({
+            title: 'Some Likes',
+            author: 'Cypress Author 3',
+            url: 'yetanother.cypress.url',
+            likes: 4
+          })
+        })
+        it('List is ordered by likes in descending order', function () {
+          //click the first view button, and expect it to contain the most likes, which was not added first.
+          cy.contains('View').click().parent().parent().should('contain', 'Likes: 5')
         })
       })
     })

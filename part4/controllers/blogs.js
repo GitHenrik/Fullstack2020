@@ -84,7 +84,7 @@ blogsRouter.get('/:id', async (request, response) => {
 
 //course task 4.13 and 4.21*
 blogsRouter.delete('/:id', async (req, res) => {
-   //check if blog with this id exists
+  //check if blog with this id exists
   const blogToBeDeleted = await Blog.findById(req.params.id)
   if (!blogToBeDeleted) {
     res.status(400).end()
@@ -96,9 +96,9 @@ blogsRouter.delete('/:id', async (req, res) => {
   }
 
   const requestingUser = await User.findById(decodedToken.id)
- 
+
   //check that the blog's creator and request id's match
-  if ( blogToBeDeleted.user.toString() === requestingUser.id.toString() ) {
+  if (blogToBeDeleted.user.toString() === requestingUser.id.toString()) {
     await Blog.findByIdAndRemove(req.params.id)
     return res.status(204).end()
   } else {
