@@ -42,20 +42,26 @@ const ordered = state => {
   return state.sort((current, next) => next.votes - current.votes)
 }
 
-const reducer = (state = initialState, action) => {
-  // console.log('state now: ', state)
-  // console.log('action', action)
+const anecdoteReducer = (state = initialState, action) => {
+  //console.log('Anecdote state now: ', state)
+  //console.log('action', action)
   switch (action.type) {
     case 'VOTE':
       //finds the anecdote to update, increments the vote count, then updates state
       const anecToUpdate = state.find(anec => anec.id === action.data.id)
       const updatedAnec = { ...anecToUpdate, votes: anecToUpdate.votes + 1 }
-      return ordered(state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec))
+      const newOrderedAnecdotes = ordered(state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec))
+      //return { anecdotes: newOrderedAnecdotes, filter: state.filter }
+      return newOrderedAnecdotes
     case 'NEW_ANECDOTE':
-      return ordered([...state, action.data])
+      const newAnecdotes = ordered([...state, action.data])
+      //return { anecdotes: newAnecdotes, filter: state.filter }
+      return newAnecdotes
     default:
-      return ordered(state)
+      const orderedAnecdotes = ordered([...state])
+      //return { anecdotes: orderedAnecdotes, filter: state.filter }
+      return orderedAnecdotes
   }
 }
 
-export default reducer
+export default anecdoteReducer
