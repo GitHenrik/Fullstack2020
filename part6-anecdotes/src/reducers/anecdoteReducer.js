@@ -19,6 +19,17 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
+export const newAnecdote = event => {
+  //finds the text from uncontrolled input component, and creates a new anecdote
+  event.preventDefault()
+  const content = event.target.anecdote.value
+  event.target.anecdote.value = ''
+  return {
+    type: 'NEW_ANECDOTE',
+    data: asObject(content)
+  }
+}
+
 export const voteAnecdote = id => {
   return {
     type: 'VOTE',
@@ -35,6 +46,8 @@ const reducer = (state = initialState, action) => {
       const anecToUpdate = state.find(anec => anec.id === action.data.id)
       const updatedAnec = { ...anecToUpdate, votes: anecToUpdate.votes + 1 }
       return state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec)
+    case 'NEW_ANECDOTE':
+      return [...state, action.data]
     default:
       return state
   }
