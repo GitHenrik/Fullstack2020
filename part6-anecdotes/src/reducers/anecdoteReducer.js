@@ -37,19 +37,24 @@ export const voteAnecdote = id => {
   }
 }
 
+//course task 6.5*: this is a sorting function, called for all returns in the reducer
+const ordered = state => {
+  return state.sort((current, next) => next.votes - current.votes)
+}
+
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+  // console.log('state now: ', state)
+  // console.log('action', action)
   switch (action.type) {
     case 'VOTE':
       //finds the anecdote to update, increments the vote count, then updates state
       const anecToUpdate = state.find(anec => anec.id === action.data.id)
       const updatedAnec = { ...anecToUpdate, votes: anecToUpdate.votes + 1 }
-      return state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec)
+      return ordered(state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec))
     case 'NEW_ANECDOTE':
-      return [...state, action.data]
+      return ordered([...state, action.data])
     default:
-      return state
+      return ordered(state)
   }
 }
 
