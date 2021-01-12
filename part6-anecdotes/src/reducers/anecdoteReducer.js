@@ -43,8 +43,6 @@ const ordered = state => {
 }
 
 const anecdoteReducer = (state = initialState, action) => {
-  //console.log('Anecdote state now: ', state)
-  //console.log('action', action)
   switch (action.type) {
     case 'VOTE':
       //finds the anecdote to update, increments the vote count, then updates state
