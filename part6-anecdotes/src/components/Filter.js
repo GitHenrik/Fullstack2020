@@ -1,17 +1,24 @@
 import React from 'react'
-//import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateFilter } from '../reducers/filterReducer'
 
 const Filter = () => {
+
+  const filterValue = useSelector(state => state.filter)
+  const dispatch = useDispatch()
+
   const handleChange = (event) => {
-    // input-kentän arvo muuttujassa event.target.value
+    dispatch(updateFilter(event.target.value))
   }
   const style = {
     marginBottom: 10
   }
 
+
+
   return (
     <div style={style}>
-      filter <input onChange={handleChange} />
+      Filter<input onChange={handleChange} value={filterValue} />
     </div>
   )
 }

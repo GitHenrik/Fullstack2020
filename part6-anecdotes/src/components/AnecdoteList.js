@@ -5,6 +5,8 @@ import { notifyVote } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes)
+  //filter usage for course task 6.12*
+  const filter = useSelector(state => state.filter)
   const dispatch = useDispatch()
   //course task 6.11, using notification
   const vote = (id, content) => {
@@ -12,21 +14,43 @@ const AnecdoteList = () => {
     dispatch(notifyVote(content))
     setTimeout(() => dispatch(notifyVote('')), 5000)
   }
-  return (
-    <div>
-      {anecdotes.map(anecdote =>
-        <div key={anecdote.id}>
-          <div>
-            {anecdote.content}
+
+  const displayAnecdotes = allAnecdotes => {
+    const filteredAnecdotes = filterAnecdotes(allAnecdotes)
+    return (
+      <div>
+        {filteredAnecdotes.map(anecdote => {
+          return (<div key={anecdote.id}>
+            <div>
+              {anecdote.content}
+            </div>
+            <div>
+              has {anecdote.votes}
+              <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+            </div>
           </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
+          )
+        })}
+
+      </div>
+    )
+  }
+
+  //filters the list to display only valid anecdotes
+  const filterAnecdotes = allAnecdotes => {
+    if (!filter)
+      return allAnecdotes
+    const filteredAnecdotes = []
+    allAnecdotes.map(anecdote => {
+      if (anecdote.content.includes(filter)) {
+        return filteredAnecdotes.push(anecdote)
+      }
+      return null
+    })
+    return filteredAnecdotes
+  }
+
+  return displayAnecdotes(anecdotes)
 
 }
 
