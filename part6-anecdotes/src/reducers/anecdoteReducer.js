@@ -19,14 +19,10 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-export const newAnecdote = event => {
-  //finds the text from uncontrolled input component, and creates a new anecdote
-  event.preventDefault()
-  const content = event.target.anecdote.value
-  event.target.anecdote.value = ''
+export const newAnecdote = anecdote => {
   return {
     type: 'NEW_ANECDOTE',
-    data: asObject(content)
+    data: anecdote.content
   }
 }
 
@@ -34,6 +30,13 @@ export const voteAnecdote = id => {
   return {
     type: 'VOTE',
     data: { id }
+  }
+}
+
+export const initializeAnecdotes = anecdotes => {
+  return {
+    type: 'INIT_ANECDOTES',
+    data: anecdotes
   }
 }
 
@@ -55,6 +58,8 @@ const anecdoteReducer = (state = initialState, action) => {
       const newAnecdotes = ordered([...state, action.data])
       //return { anecdotes: newAnecdotes, filter: state.filter }
       return newAnecdotes
+    case 'INIT_ANECDOTES':
+      return action.data
     default:
       const orderedAnecdotes = ordered([...state])
       //return { anecdotes: orderedAnecdotes, filter: state.filter }
