@@ -1,3 +1,5 @@
+import anecdoteService from '../services/anecdotes'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,24 +21,34 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-export const newAnecdote = anecdote => {
-  return {
-    type: 'NEW_ANECDOTE',
-    data: anecdote.content
+export const newAnecdote = content => {
+  return async dispatch => {
+    //first complete an asynchronous operation, then dispatch the action with new data to the store
+    const newAnecdote = await anecdoteService.createAnecdote(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote
+    })
   }
 }
 
-export const voteAnecdote = id => {
-  return {
-    type: 'VOTE',
-    data: { id }
+export const voteAnecdote = anecdote => {
+  return async dispatch => {
+    await anecdoteService.voteAnecdote(anecdote)
+    dispatch({
+      type: 'VOTE',
+      data: anecdote.id
+    })
   }
 }
 
-export const initializeAnecdotes = anecdotes => {
-  return {
-    type: 'INIT_ANECDOTES',
-    data: anecdotes
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes
+    })
   }
 }
 
@@ -49,9 +61,10 @@ const anecdoteReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'VOTE':
       //finds the anecdote to update, increments the vote count, then updates state
-      const anecToUpdate = state.find(anec => anec.id === action.data.id)
+      //client side/front-end incrementation of the vote count 
+      const anecToUpdate = state.find(anec => anec.id === action.data)
       const updatedAnec = { ...anecToUpdate, votes: anecToUpdate.votes + 1 }
-      const newOrderedAnecdotes = ordered(state.map(anec => anec.id === action.data.id ? anec = updatedAnec : anec))
+      const newOrderedAnecdotes = ordered(state.map(anec => anec.id === action.data ? anec = updatedAnec : anec))
       //return { anecdotes: newOrderedAnecdotes, filter: state.filter }
       return newOrderedAnecdotes
     case 'NEW_ANECDOTE':
@@ -59,7 +72,7 @@ const anecdoteReducer = (state = initialState, action) => {
       //return { anecdotes: newAnecdotes, filter: state.filter }
       return newAnecdotes
     case 'INIT_ANECDOTES':
-      return action.data
+      return ordered(action.data)
     default:
       const orderedAnecdotes = ordered([...state])
       //return { anecdotes: orderedAnecdotes, filter: state.filter }
