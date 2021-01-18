@@ -3,8 +3,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { newAnecdote } from '../reducers/anecdoteReducer'
 import { notify } from '../reducers/notificationReducer'
+import { updateTimerId } from '../reducers/timerReducer'
 
-const AnecdoteForm = ({ newAnecdote, notify }) => {
+const AnecdoteForm = ({ newAnecdote, notify, updateTimerId, timer }) => {
 
   //const dispatch = useDispatch()
 
@@ -15,7 +16,8 @@ const AnecdoteForm = ({ newAnecdote, notify }) => {
     //dispatch(newAnecdote(content))
     //dispatch(notify(`Created a new anecdote: ${content}`, 3000))
     newAnecdote(content)
-    notify(`Created a new anecdote: ${content}`, 3000)
+    clearTimeout(timer)
+    notify(`Created a new anecdote: ${content}`, 3000, updateTimerId)
   }
   return (
     <div>
@@ -30,9 +32,16 @@ const AnecdoteForm = ({ newAnecdote, notify }) => {
 
 const mapDispatchToProps = {
   newAnecdote,
-  notify
+  notify,
+  updateTimerId
 }
 
-const connectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm)
+const mapStateToProps = state => {
+  return {
+    timer: state.timer
+  }
+}
+
+const connectedAnecdoteForm = connect(mapStateToProps, mapDispatchToProps)(AnecdoteForm)
 //export default AnecdoteForm
 export default connectedAnecdoteForm

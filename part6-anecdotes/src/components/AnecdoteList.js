@@ -3,8 +3,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { notify } from '../reducers/notificationReducer'
+import { updateTimerId } from '../reducers/timerReducer'
 
-const AnecdoteList = ({ anecdotes, filter, voteAnecdote, notify }) => {
+const AnecdoteList = ({ anecdotes, filter, voteAnecdote, notify, updateTimerId, timer }) => {
 
   //const anecdotes = useSelector(state => state.anecdotes)
   //filter usage for course task 6.12*
@@ -16,7 +17,9 @@ const AnecdoteList = ({ anecdotes, filter, voteAnecdote, notify }) => {
     //dispatch(voteAnecdote(anecdote))
     //dispatch(notify(`You voted for ${anecdote.content}`, 3000))
     voteAnecdote(anecdote)
-    notify(`You voted for ${anecdote.content}`, 3000)
+    //console.log('clearing this timer id: ', timer)
+    clearTimeout(timer)
+    notify(`You voted for ${anecdote.content}`, 3000, updateTimerId)
     //setTimeout(() => dispatch(notify('')), 5000)
   }
 
@@ -64,13 +67,15 @@ const AnecdoteList = ({ anecdotes, filter, voteAnecdote, notify }) => {
 const mapStateToProps = state => {
   return {
     anecdotes: state.anecdotes,
-    filter: state.filter
+    filter: state.filter,
+    timer: state.timer
   }
 }
 
 const mapDispatchToProps = {
   voteAnecdote,
-  notify
+  notify,
+  updateTimerId
 }
 
 const connectedAnecdoteList = connect(

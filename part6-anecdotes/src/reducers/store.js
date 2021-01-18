@@ -1,6 +1,7 @@
 import anecdoteReducer from './anecdoteReducer'
 import filterReducer from './filterReducer'
 import notificationReducer from './notificationReducer'
+import timerReducer from './timerReducer'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
@@ -9,7 +10,8 @@ import thunk from 'redux-thunk'
 const reducer = combineReducers({
   anecdotes: anecdoteReducer,
   filter: filterReducer,
-  notification: notificationReducer
+  notification: notificationReducer,
+  timer: timerReducer
 })
 
 const store = createStore(

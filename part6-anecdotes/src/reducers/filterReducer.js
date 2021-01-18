@@ -1,5 +1,3 @@
-const filterAtStart = ''
-
 export const updateFilter = value => {
   return {
     type: 'UPDATE_FILTER',
@@ -7,9 +5,8 @@ export const updateFilter = value => {
   }
 }
 
-
 //template for course task 6.12
-const filterReducer = (filter = filterAtStart, action) => {
+const filterReducer = (filter = '', action) => {
   switch (action.type) {
     case 'UPDATE_FILTER':
       return action.data
