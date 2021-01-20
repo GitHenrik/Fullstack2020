@@ -1,3 +1,6 @@
+//FullStack 2020 -course tasks, part 7. Template taken from course material as expected.
+//This final part of the course uses the same code template as course parts 4-5.
+
 const config = require('./utils/config')
 const express = require('express')
 //require('express-async-errors')

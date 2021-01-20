@@ -1,3 +1,6 @@
+//FullStack 2020 -course tasks, part 7. Template taken from course material as expected.
+//This final part of the course uses the same code template as course parts 4-5.
+
 import React, { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -6,10 +9,14 @@ import LoginForm from './components/LoginForm'
 import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import UserList from './components/UserList'
+import { useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from "react-router-dom"
 
-//FullStack 2020 -course tasks, part 5. Template taken from course material as expected.
-//uses backend implementation from course tasks in course part 4.
-//it is assumed that a logged user can see blogs from all users.
 const App = () => {
   const [blogs, setBlogs] = useState([])
   //state for current user
@@ -21,11 +28,11 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  //state for notification messages
-  const [message, setMessage] = useState(null)
 
+  const dispatch = useDispatch()
   //instantiates all blogs from backend
   useEffect(() => {
+    //console.log('useEffect running')
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -37,10 +44,9 @@ const App = () => {
       setBlogs(blogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
     }
     )
-  }, [])
+  }, [dispatch])
 
 
-  //Login handler, course task 5.1
   const handleSubmit = async event => {
     event.preventDefault()
     try {
@@ -55,33 +61,21 @@ const App = () => {
         username: user.username,
         name: user.name
       })
-      setMessage('Successful login')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setNotification('Successful login'))
       setUsername('')
       setPassword('')
     }
     catch (exception) {
-      setMessage('wrong credentials')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setNotification('wrong credentials'))
     }
   }
 
-  //logout for task 5.2
   const handleLogout = () => {
-    setMessage('Logged out')
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
+    dispatch(setNotification('Logged out'))
     setUser(null)
     window.localStorage.removeItem('loggedUser')
-    //console.log('logged out')
   }
 
-  //blog creation for task 5.3
   const handleCreation = async event => {
     event.preventDefault()
     const newBlog = {
@@ -91,10 +85,7 @@ const App = () => {
     }
     const createdBlog = await blogService.create(newBlog)
     setBlogs(blogs.concat(createdBlog))
-    setMessage(`Created a new blog called ${newBlog.title}`)
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
+    dispatch(setNotification(`Created a new blog called ${newBlog.title}`))
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -131,8 +122,9 @@ const App = () => {
 
   if (user === null) {
     return (
+
       <div>
-        <Notification message={message} />
+        <Notification />
 
         <LoginForm
           username={username}
@@ -147,26 +139,41 @@ const App = () => {
 
 
   return (
-    <div>
-      <Notification message={message} />
+    <Router>
       <div>
-        <h4>User {user.username} has logged in</h4>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-      <Togglable buttonLabel={'Create a new blog'}>
-        <NewBlogForm
+        <Link style={{ padding: 4 }} to='/'>Blogs</Link>
+        <Link style={{ padding: 4 }} to='/users'>User list</Link>
 
-          handleCreation={handleCreation}
-          title={title}
-          author={author}
-          url={url}
-          setTitle={setTitle}
-          setAuthor={setAuthor}
-          setUrl={setUrl}
-        />
-      </Togglable>
-      <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} user={user} />
-    </div>
+        <Notification />
+        <div>
+          <h4>{user.username} has logged in</h4>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      </div>
+      <div>
+        <Switch>
+          <Route path='/users'>
+            <UserList />
+          </Route>
+          <Route path='/'>
+            <Togglable buttonLabel={'Create a new blog'}>
+              <NewBlogForm
+
+                handleCreation={handleCreation}
+                title={title}
+                author={author}
+                url={url}
+                setTitle={setTitle}
+                setAuthor={setAuthor}
+                setUrl={setUrl}
+              />
+            </Togglable>
+            <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} user={user} />
+          </Route>
+
+        </Switch>
+      </div>
+    </Router>
   )
 }
 
