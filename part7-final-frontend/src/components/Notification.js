@@ -7,7 +7,7 @@ const Notification = () => {
   if (message === null) {
     return null
   }
-  return <div id='notification'><h1>{message}</h1></div>
+  return <div id='notification'><h3>{message}</h3></div>
 }
 
 export default Notification

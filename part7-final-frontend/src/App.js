@@ -116,7 +116,7 @@ const App = () => {
     //setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
   }
 
-  //TODO task 7.11 / blog deletion
+  //task 7.11 / blog deletion
   const handleDelete = async blog => {
     if (window.confirm(`Remove a blog called ${blog.title}?`)) {
       dispatch(deleteBlog(blog.id))
@@ -142,19 +142,17 @@ const App = () => {
     )
   }
 
-
+  //the element is always the menu
   return (
     <Router>
-      <div>
+      <div style={{ padding: 2, border: "2px solid black" }}>
         <Link style={{ padding: 4 }} to='/'>Blogs</Link>
         <Link style={{ padding: 4 }} to='/users'>User list</Link>
+        {user.username} has logged in
+        <button onClick={handleLogout}>Logout</button>
 
-        <Notification />
-        <div>
-          <h4>{user.username} has logged in</h4>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
       </div>
+      <Notification />
       <div>
         <Switch>
           <Route path='/users'>
