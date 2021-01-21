@@ -1,7 +1,9 @@
 import React from 'react'
 import Blog from './Blog'
+import { useSelector } from 'react-redux'
 
-const BlogForm = ({ blogs, handleLike, handleDelete, user }) => {
+const BlogForm = ({ handleLike, handleDelete, user }) => {
+  const blogs = useSelector(state => state.blogs)
   return (
     <div>
       <h3>Blogs</h3>

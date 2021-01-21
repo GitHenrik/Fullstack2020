@@ -2,7 +2,7 @@ import React from 'react'
 
 const NewBlogForm = ({ handleCreation, title, author, url, setTitle, setAuthor, setUrl }) => {
 
-
+  //as of task 7.10 this is still controlled through react state
   return (
     <div>
       <form onSubmit={handleCreation} className='newBlogForm'>

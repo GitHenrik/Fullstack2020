@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+//as of task 7.10 this is still controlled through react state
 const LoginForm = ({ username, password, handleSubmit, setUsername, setPassword }) => {
   return (
     <div>

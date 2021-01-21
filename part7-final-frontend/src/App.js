@@ -1,5 +1,7 @@
-//FullStack 2020 -course tasks, part 7. Template taken from course material as expected.
+//FullStack 2020 -course tasks, part 7, Henrik Tarnanen. Template taken from course material as expected.
 //This final part of the course uses the same code template as course parts 4-5.
+
+//commented out code includes implementation from the mentioned course parts 4-5.
 
 import React, { useState, useEffect } from 'react'
 import blogService from './services/blogs'
@@ -12,19 +14,20 @@ import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import { useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { createBlog, getBlogs, likeBlog, deleteBlog } from './reducers/blogReducer'
 import {
   BrowserRouter as Router,
   Switch, Route, Link
 } from "react-router-dom"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+
   //state for current user
   const [user, setUser] = useState(null)
-  //states for login form
+
+  //states for form data
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  //states for new blog creation
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -39,11 +42,7 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-    blogService.getAll().then(blogs => {
-      //console.log('updated blog list')
-      setBlogs(blogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
-    }
-    )
+    dispatch(getBlogs())
   }, [dispatch])
 
 
@@ -76,6 +75,7 @@ const App = () => {
     window.localStorage.removeItem('loggedUser')
   }
 
+  // task 7.10 / blog creation in redux
   const handleCreation = async event => {
     event.preventDefault()
     const newBlog = {
@@ -83,18 +83,17 @@ const App = () => {
       author: author,
       url: url
     }
-    const createdBlog = await blogService.create(newBlog)
-    setBlogs(blogs.concat(createdBlog))
+    // const createdBlog = await blogService.create(newBlog)
+    // setBlogs(blogs.concat(createdBlog))
+    dispatch(createBlog(newBlog))
     dispatch(setNotification(`Created a new blog called ${newBlog.title}`))
     setTitle('')
     setAuthor('')
     setUrl('')
   }
 
-  //course task 5.8*, this is called when clicking a like button to increment likes by 1
-  //handler is passed as a prop to single blogs through the BlogForm-component
+  //task 7.11 / like button functionality 
   const handleLike = async blog => {
-    //console.log('Updating blog with id ', blog.id)
     const newLikes = blog.likes + 1
     const updatedBlog = {
       title: blog.title,
@@ -103,20 +102,22 @@ const App = () => {
       likes: newLikes,
       user: blog.user.id
     }
+    dispatch(likeBlog(blog.id, updatedBlog))
+
     //put request to update data on the server
-    await blogService.update(blog.id, updatedBlog)
+    //await blogService.update(blog.id, updatedBlog)
     //update frontend with new data
-    const updatedBlogs = await blogService.getAll()
+    //const updatedBlogs = await blogService.getAll()
     //setBlogs(updatedBlogs)
-    setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
+    //setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
   }
 
-  //course task 5.10*, blog deletion
+  //TODO task 7.11 / blog deletion
   const handleDelete = async blog => {
     if (window.confirm(`Remove a blog called ${blog.title}?`)) {
-      await blogService.deleteBlog(blog.id)
-      const updatedBlogs = blogs.filter(blogToSave => blog.id !== blogToSave.id)
-      setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
+      dispatch(deleteBlog(blog.id))
+      //const updatedBlogs = blogs.filter(blogToSave => blog.id !== blogToSave.id)
+      //setBlogs(updatedBlogs.sort((blog, nextBlog) => { return nextBlog.likes - blog.likes }))
     }
   }
 
@@ -168,7 +169,7 @@ const App = () => {
                 setUrl={setUrl}
               />
             </Togglable>
-            <BlogForm blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} user={user} />
+            <BlogForm handleLike={handleLike} handleDelete={handleDelete} user={user} />
           </Route>
 
         </Switch>
