@@ -22,6 +22,7 @@ import {
   Switch, Route, Link
 } from "react-router-dom"
 import SingleUserPage from './components/SingleUserPage'
+import SingleBlogPage from './components/SingleBlogPage'
 
 const App = () => {
 
@@ -154,6 +155,9 @@ const App = () => {
       <Notification />
       <div>
         <Switch>
+          <Route path='/blogs/:id'>
+            <SingleBlogPage handleLike={handleLike} handleDelete={handleDelete} user={user} />
+          </Route>
           <Route path='/users/:id'>
             <SingleUserPage />
           </Route>
@@ -173,7 +177,7 @@ const App = () => {
                 setUrl={setUrl}
               />
             </Togglable>
-            <BlogForm handleLike={handleLike} handleDelete={handleDelete} user={user} />
+            <BlogForm />
           </Route>
 
         </Switch>

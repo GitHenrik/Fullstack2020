@@ -8,7 +8,6 @@ const SingleUserPage = () => {
   if (!user[0]) {
     return null
   }
-  console.log(user)
   return (
     <div>
       <h1>{user[0].name}</h1>
