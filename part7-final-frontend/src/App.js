@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { setUser } from './reducers/userReducer'
 import { createBlog, getBlogs, likeBlog, deleteBlog } from './reducers/blogReducer'
+import { getUsers } from './reducers/allUsersReducer'
 import {
   BrowserRouter as Router,
   Switch, Route, Link
@@ -44,6 +45,7 @@ const App = () => {
       dispatch(setUser(user))
       blogService.setToken(user.token)
     }
+    dispatch(getUsers())
     dispatch(getBlogs())
   }, [dispatch])
 

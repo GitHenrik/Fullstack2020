@@ -1,9 +1,29 @@
 import React from 'react';
-
-const UserList = ({ users }) => {
+import { useSelector } from 'react-redux'
+const UserList = () => {
+  const users = useSelector(state => state.users)
   return (
-    <h3>List of users</h3>
-
+    <div>
+      <h3>User data</h3>
+      <table>
+        <tbody>
+          <tr>
+            <th>Username</th>
+            <th>Blog count</th>
+          </tr>
+          {
+            users.map(user => {
+              return (
+                <tr key={user.id}>
+                  <td>{user.name}</td>
+                  <td>{user.blog.length}</td>
+                </tr>
+              )
+            })
+          }
+        </tbody>
+      </table>
+    </div>
   )
 }
 
