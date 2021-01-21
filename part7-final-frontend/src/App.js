@@ -12,8 +12,9 @@ import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { setUser } from './reducers/userReducer'
 import { createBlog, getBlogs, likeBlog, deleteBlog } from './reducers/blogReducer'
 import {
   BrowserRouter as Router,
@@ -22,10 +23,7 @@ import {
 
 const App = () => {
 
-  //state for current user
-  const [user, setUser] = useState(null)
-
-  //states for form data
+  //Only form state is saved in React state instead of redux.
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
@@ -33,13 +31,17 @@ const App = () => {
   const [url, setUrl] = useState('')
 
   const dispatch = useDispatch()
-  //instantiates all blogs from backend
+  // user is visible to several components from here. It could be selected from 
+  // redux state individually in each different place if that was wanted
+  const user = useSelector(state => state.user)
+
+
   useEffect(() => {
-    //console.log('useEffect running')
+    //instantiates all blogs from backend and inits user state
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
     dispatch(getBlogs())
@@ -55,11 +57,11 @@ const App = () => {
       )
       blogService.setToken(user.token)
       //after logging in, update the state accordingly
-      setUser({
+      dispatch(setUser({
         token: user.token,
         username: user.username,
         name: user.name
-      })
+      }))
       dispatch(setNotification('Successful login'))
       setUsername('')
       setPassword('')
@@ -71,7 +73,7 @@ const App = () => {
 
   const handleLogout = () => {
     dispatch(setNotification('Logged out'))
-    setUser(null)
+    dispatch(setUser(null))
     window.localStorage.removeItem('loggedUser')
   }
 
