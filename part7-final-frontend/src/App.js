@@ -21,6 +21,7 @@ import {
   BrowserRouter as Router,
   Switch, Route, Link
 } from "react-router-dom"
+import SingleUserPage from './components/SingleUserPage'
 
 const App = () => {
 
@@ -35,7 +36,6 @@ const App = () => {
   // user is visible to several components from here. It could be selected from 
   // redux state individually in each different place if that was wanted
   const user = useSelector(state => state.user)
-
 
   useEffect(() => {
     //instantiates all blogs from backend and inits user state
@@ -141,7 +141,6 @@ const App = () => {
       </div>
     )
   }
-
   //the element is always the menu
   return (
     <Router>
@@ -155,6 +154,9 @@ const App = () => {
       <Notification />
       <div>
         <Switch>
+          <Route path='/users/:id'>
+            <SingleUserPage />
+          </Route>
           <Route path='/users'>
             <UserList />
           </Route>
